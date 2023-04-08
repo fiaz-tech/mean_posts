@@ -5,6 +5,7 @@ import connectDB from './backend/config/db.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
+import path from 'path'
 
 import postRoutes from './backend/routes/postRoutes.js'
 
@@ -19,6 +20,8 @@ app.use(express.json())
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/imageuploads", express.static(path.join("backend/imageuploads")));
+
 
 
 

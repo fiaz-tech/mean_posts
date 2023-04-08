@@ -3,7 +3,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http'
 
@@ -22,6 +22,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatPaginatorModule } from '@angular/material/paginator'
 
 
 @NgModule({
@@ -37,14 +38,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
     AppRoutingModule,
     CommonModule,
     HttpClientModule,
-    FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatInputModule,
     MatCardModule,
     MatButtonModule,
     MatToolbarModule,
     MatExpansionModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

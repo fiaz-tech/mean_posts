@@ -1,5 +1,34 @@
 import asyncHandler from 'express-async-handler'
 import Posts from '../models/postModel.js'
+import multer from 'multer'
+
+
+
+const MIME_TYPE_MAP = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg"
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = new Error("Invalid mime type");
+    if (isValid) {
+      error = null;
+    }
+    cb(error, "backend/imageuploads");
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname
+      .toLowerCase()
+      .split(" ")
+      .join("-");
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + "-" + Date.now() + "." + ext);
+  }
+});
+
 
 
 
@@ -9,17 +38,23 @@ import Posts from '../models/postModel.js'
 // @access  Public
 const createPost = asyncHandler(async (req, res) => {
 
+  const url = req.protocol + "://" + req.get("host");
+  const imagePath = url + "/imageuploads/" + req.file.filename
+
   const { title, content } = req.body
 
   const post = await Posts.create({
-    title, content
+    title, content, imagePath
   })
 
   if (post) {
     res.status(201).json({
-      _id: post._id,
-      title: post.title,
-      content: post.content,
+
+      message: "Successfully created a post",
+      post: post
+
+
+
     })
   } else {
     res.status(400)
@@ -32,11 +67,29 @@ const createPost = asyncHandler(async (req, res) => {
 // @route   GET /api/posts
 // @access  Public
 const getPosts = asyncHandler(async (req, res) => {
-  const posts = await Posts.find({});
-  res.status(200).json({
-      message: "posts fetched successfully",
-      posts: posts
-  })
+
+  const pageSize = 2
+  const currentPage = Number(req.query.page) || 1
+  const postQuery = Posts.find();
+  let fetchedPosts;
+
+  if (pageSize && currentPage) {
+    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
+
+  postQuery
+    .then(documents => {
+      fetchedPosts = documents;
+      return Posts.count();
+    })
+    .then(count => {
+      res.status(200).json({
+        message: "Posts fetched successfully!",
+        posts: fetchedPosts,
+        maxPosts: count
+      });
+    });
+
 
 })
 
@@ -78,11 +131,20 @@ const deletePost= asyncHandler(async (req, res) => {
 // @route   PUT /api/posts/:id
 // @access  Private/Admin
 const updatePost = asyncHandler(async (req, res) => {
+
+  let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/imageuploads/" + req.file.filename
+    }
+
+
   const post = await Posts.findById(req.params.id)
 
   if (post) {
     post.title = req.body.title || post.title
     post.content = req.body.content || post.content
+    post.imagePath =  imagePath || post.imagePath
 
     const updatedPost = await post.save()
 
@@ -90,6 +152,7 @@ const updatePost = asyncHandler(async (req, res) => {
       _id: updatedPost._id,
       title: updatedPost.title,
       content: updatedPost.content,
+      imagePath: updatePost.imagePath
     })
   } else {
     res.status(404)
@@ -106,6 +169,7 @@ export {
  getPostById,
  deletePost,
  updatePost,
+ storage,
 }
 
 
