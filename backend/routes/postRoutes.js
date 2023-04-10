@@ -7,6 +7,7 @@ import {
   storage,
 
  } from '../controllers/postController.js'
+ import { protect } from '../middleware/authMiddleware.js'
  import multer from 'multer'
 
  import express from 'express'
@@ -15,7 +16,7 @@ const router = express.Router()
 
 
 router.route('/')
-.post(multer({storage: storage}).single('image'), createPost)
+.post(protect,multer({storage: storage}).single('image'), createPost)
 .get(getPosts)
 
 

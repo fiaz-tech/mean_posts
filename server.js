@@ -8,6 +8,7 @@ import bodyParser from 'body-parser'
 import path from 'path'
 
 import postRoutes from './backend/routes/postRoutes.js'
+import userRoutes from './backend/routes/userRoutes.js'
 
 const app = express();
 
@@ -23,23 +24,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/imageuploads", express.static(path.join("backend/imageuploads")));
 
 
-
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
-  );
-  next();
-});
-
-
 app.use('/api/posts', postRoutes);
+app.use('/api/users', userRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
