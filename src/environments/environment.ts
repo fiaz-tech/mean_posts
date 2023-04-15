@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://localhost:33000/api"
+  apiUrl: "https://mean-backend-shkh.onrender.com/api"
 };
 
 /*

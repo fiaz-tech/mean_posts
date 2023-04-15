@@ -54,7 +54,7 @@ export class PostService{
 
     this.http
       .post<{ message: string, post: Post }>(
-        "http://localhost:33000/api/posts",
+        BACKEND_URL,
         postData
         )
       .subscribe(responseData => {
@@ -86,7 +86,7 @@ export class PostService{
 
 
     this.http
-      .put("http://localhost:33000/api/posts/" + _id + "/update", postData)
+      .put(BACKEND_URL + _id + "/update", postData)
       .subscribe(response => {
 
         this.router.navigate(["/"]);
@@ -94,7 +94,7 @@ export class PostService{
   }
 
   deletePost(postId: string) {
-    return this.http.delete("http://localhost:33000/api/posts/"+postId)
+    return this.http.delete(BACKEND_URL+postId)
 
   }
 
