@@ -42,19 +42,16 @@ const createPost = asyncHandler(async (req, res) => {
   const imagePath = url + "/imageuploads/" + req.file.filename
 
   const { title, content } = req.body
+  const user = req.user._id
 
   const post = await Posts.create({
-    title, content, imagePath
-  })
+    title, content, imagePath, user  })
 
   if (post) {
     res.status(201).json({
 
       message: "Successfully created a post",
       post: post
-
-
-
     })
   } else {
     res.status(400)
@@ -104,6 +101,7 @@ const getPostById = asyncHandler(async (req, res) => {
       id: post._id,
       title: post.title,
       content: post.content,
+      user: post.user._id,
     })
   }else {
     res.status(404)
@@ -117,10 +115,13 @@ const getPostById = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const deletePost= asyncHandler(async (req, res) => {
 
-  await Posts.findByIdAndDelete(req.params.id)
-
-  res.status(200).json({message: 'Post removed'})
-
+  const postDelete =await Posts.findByIdAndDelete(req.params.id)
+  if(postDelete){
+    res.status(201).json({message: "Post deleted"})
+  }else {
+    res.status(404)
+    throw new Error('Post delete failed')
+  }
 
 })
 
@@ -142,6 +143,7 @@ const updatePost = asyncHandler(async (req, res) => {
   const post = await Posts.findById(req.params.id)
 
   if (post) {
+
     post.title = req.body.title || post.title
     post.content = req.body.content || post.content
     post.imagePath =  imagePath || post.imagePath
@@ -149,18 +151,18 @@ const updatePost = asyncHandler(async (req, res) => {
     const updatedPost = await post.save()
 
     res.json({
-      _id: updatedPost._id,
+      //_id: updatedPost._id,
       title: updatedPost.title,
       content: updatedPost.content,
-      imagePath: updatePost.imagePath
+      imagePath: updatePost.imagePath,
+      //user: updatePost.user._id
     })
   } else {
+    console.log("enteredError")
     res.status(404)
     throw new Error('Post not found')
   }
 })
-
-
 
 
 export {

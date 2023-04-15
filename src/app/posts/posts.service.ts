@@ -4,6 +4,9 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from '@angular/router';
 
 import { Post } from "./post.model";
+import { environment } from '../../environments/environment'
+
+const BACKEND_URL = environment.apiUrl + "/posts/";
 
 
 @Injectable({providedIn: 'root'})
@@ -19,10 +22,11 @@ export class PostService{
     const queryParams = `?page=${currentPage}`;
     this.http
       .get<{ message: string; posts: any, maxPosts: number }>(
-        "http://localhost:33000/api/posts" + queryParams
+        BACKEND_URL + queryParams
       )
 
       .subscribe(postData => {
+        console.log(postData);
         this.posts = postData.posts
         this.postsUpdated.next({
           posts: [...this.posts],
@@ -36,8 +40,8 @@ export class PostService{
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string; title: string; content: string, imagePath: string }>(
-      "http://localhost:33000/api/posts/" + id
+    return this.http.get<{ _id: string; title: string; content: string, imagePath: string, user: any }>(
+      BACKEND_URL + id
     );
   }
 
@@ -54,7 +58,6 @@ export class PostService{
         postData
         )
       .subscribe(responseData => {
-
         this.router.navigate(["/"]);
 
       });
@@ -76,9 +79,11 @@ export class PostService{
         _id: _id,
         title: title,
         content: content,
-        imagePath: image
+        imagePath: image,
+        user: null
       };
     }
+
 
     this.http
       .put("http://localhost:33000/api/posts/" + _id + "/update", postData)

@@ -16,15 +16,15 @@ const router = express.Router()
 
 
 router.route('/')
-.post(protect,multer({storage: storage}).single('image'), createPost)
+.post(protect, multer({storage: storage}).single('image'), createPost)
 .get(getPosts)
 
 
-router.route('/:id/update').put(multer({storage: storage}).single('image'), updatePost)
+router.route('/:id/update').put(protect, multer({storage: storage}).single('image'), updatePost)
 
 router.route('/:id')
 .get(getPostById)
-.delete(deletePost)
+.delete(protect, deletePost)
 
 
 

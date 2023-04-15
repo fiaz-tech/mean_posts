@@ -19,6 +19,7 @@ posts: Post[] = [];
 isLoading = false;
 totalPosts = 0;
 postsPerPage = 2;
+userId: string;
 currentPage = 1;
 pageSizeOptions = [1, 2, 5, 10];
 userIsAuthenticated = false;
@@ -31,6 +32,7 @@ constructor(public postService: PostService, private authService: AuthService){}
 ngOnInit() {
   this.isLoading = true;
   this.postService.getPosts(this.currentPage);
+  this.userId = this.authService.getUserId();
   this.postsSub =
   this.postService.getPostUpdateListener()
   .subscribe((postData: {posts: Post[], postCount: number}) => {
@@ -43,6 +45,7 @@ ngOnInit() {
   this.authStatusSub = this.authService.getAuthStatusListener().subscribe(
     isAuthenticated => {
       this.userIsAuthenticated = isAuthenticated;
+      this.userId = this.authService.getUserId();
     }
   )
 
@@ -60,10 +63,9 @@ onChangedPage(pageData: PageEvent) {
 
 onDelete(postId: string) {
   this.isLoading = true;
-    this.postService.deletePost(postId).subscribe(() => {
+  this.postService.deletePost(postId).subscribe(() => {
       this.postService.getPosts(this.currentPage);
     });
-  this.postService.deletePost(postId);
 }
 
 ngOnDestroy(){

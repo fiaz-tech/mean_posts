@@ -1,14 +1,14 @@
-import { notFound, errorHandler } from './backend/middleware/errorMiddleware.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 import express from 'express'
-import connectDB from './backend/config/db.js'
+import connectDB from './config/db.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import path from 'path'
 
-import postRoutes from './backend/routes/postRoutes.js'
-import userRoutes from './backend/routes/userRoutes.js'
+import postRoutes from './routes/postRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 
 const app = express();
 
